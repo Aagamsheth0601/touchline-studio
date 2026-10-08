@@ -76,3 +76,13 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: names in canvas textures became tiny when the pitch was zoomed out.
 - Cause: texture text scaled in world units with the pitch.
 - Fix: camera-projected HTML buttons with fixed 14px text, retaining click selection.
+
+### Auth session refresh and connection failures
+- Symptom: a token refresh could clear the cloud list, and a rejected initial session request had no visible error.
+- Cause: all auth events cleared records; getSession had no rejection handler.
+- Fix: clear records only when signed out; surface initial session failures.
+
+### Supabase connection verification
+- Connected project zfizduvgocwtviacqmnt via ignored .env; production/local redirects configured.
+- Real SQL transaction verified owner read/insert, other-owner isolation, forged-owner insert rejection, anonymous denial; all test data rolled back.
+- Configured signed-out panel verified at 390/768/1280 via Playwright. Eight unit tests passed. Live email login and cross-session save still pending.

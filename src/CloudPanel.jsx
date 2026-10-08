@@ -16,7 +16,7 @@ export default function CloudPanel({ lineup, onOpen }) {
     } = cloud.auth.onAuthStateChange((_event, session) => {
       if (alive) {
         setUser(session?.user || null);
-        setRecords([]);
+        if (!session) setRecords([]);
       }
     });
     cloud.auth.getSession().then(({ data, error }) => {
@@ -24,6 +24,8 @@ export default function CloudPanel({ lineup, onOpen }) {
         if (error) setError(error.message);
         else setUser(data.session?.user || null);
       }
+    }).catch((e) => {
+      if (alive) setError(e.message || "Unable to restore your session. Please sign in again.");
     });
     return () => {
       alive = false;
