@@ -6,6 +6,25 @@ import { presets, makePlayers } from "./formations.js";
 import "./style.css";
 import { readLineups, saveLineup } from "./storage.js";
 
+// A decorative passing drill, separate from the editable lineup.
+function PassingPreview() {
+  const [playing, setPlaying] = useState(true);
+  return <div className={"passing-preview " + (playing ? "" : "paused")}>
+    <svg viewBox="0 0 280 130" role="img" aria-label="Animated three-player passing drill">
+      <rect x="8" y="8" width="264" height="114" rx="12" className="mini-field" />
+      <path d="M140 8V122 M8 40H42V90H8 M272 40H238V90H272" className="mini-lines" />
+      <circle cx="140" cy="65" r="24" className="mini-lines" />
+      <path d="M60 88L140 35L220 88Z" className="pass-route" />
+      {[[60,88,6],[140,35,10],[220,88,9]].map(([x,y,n],i)=><g key={n} className={"mini-player player-"+i} style={{transformOrigin:`${x}px ${y}px`}}>
+        <path d={`M${x-7} ${y-12}l-9 6 4 7 5-3v16h14v-16l5 3 4-7-9-6-7 3z`} fill={i===1 ? "#ef986f" : "#d9efa1"}/>
+        <text x={x} y={y+5} textAnchor="middle">{n}</text>
+      </g>)}
+      <g className="passing-ball"><circle r="5" fill="#fff"/><path d="M0-3L3-1 2 3H-2L-3-1Z" fill="#20372a"/></g>
+    </svg>
+    <div className="preview-caption"><span>PASS. MOVE. CONNECT.</span><button onClick={()=>setPlaying(!playing)} aria-label={playing ? "Pause passing animation" : "Play passing animation"}>{playing ? "Pause" : "Play"}</button></div>
+  </div>;
+}
+
 function App() {
   const [format, setFormat] = useState(6),
     [formation, setFormation] = useState("2-2-1"),
@@ -150,7 +169,7 @@ function App() {
         </a>
         <span className="header-note">YOUR TEAM. YOUR SHAPE.</span>
         <span className="version">
-          Lineup lab <b>02</b>
+          Lineup lab <b>03</b>
         </span>
       </header>
       <main>
@@ -162,13 +181,11 @@ function App() {
               One team. Any format. Start with a formation.
             </p>
           </div>
-          <span className="session-label">
-            THIS DEVICE ONLY
-            <span>
-              {dirty ? "Unsaved changes" : "Save lineups to revisit later"}
-            </span>
-          </span>
+          <PassingPreview />
         </div>
+        <details className="library-drawer">
+          <summary><span className="library-title">{name || "Untitled lineup"}<small>{format}v{format} / {formation}</small></span><span className="library-action">{dirty ? "Unsaved edits · " : ""}Save & open lineups <span aria-hidden="true">↗</span></span></summary>
+          <div className="library-content">
         <section className="save-bar" aria-label="Lineup library">
           <label>
             Game / lineup name
@@ -209,6 +226,8 @@ function App() {
           lineup={{ name, format, formation, profiles }}
           onOpen={openCloud}
         />
+          </div>
+        </details>
         <div className="workspace">
           <aside className="setup panel">
             <div className="section-heading">

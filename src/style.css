@@ -872,3 +872,46 @@ dd {
   opacity: 0.6;
   cursor: wait;
 }
+/* Visual polish: keep the pitch prominent and secondary tools within reach. */
+body { background: radial-gradient(ellipse at 70% 0%, #243c2638, transparent 55%), #101713; }
+header { height: 72px; background: #101713b8; }
+.brand-symbol { border-radius: 9px 2px 9px 2px; }
+main { padding-top: 24px; }
+.page-heading { margin-bottom: 20px; gap: 24px; }
+h1 { font-size: clamp(42px, 4.5vw, 64px); letter-spacing: -1px; }
+.panel { background: linear-gradient(145deg, #1c2920, #162019); border-color: #a7c68a22; border-radius: 16px; padding: 18px; }
+.workspace { grid-template-columns: 218px minmax(0,1fr) 204px; gap: 14px; }
+.pitch-panel { border-radius: 18px; box-shadow: 0 18px 60px #0003; border-color: #b5d09b30; }
+.pitch-area { height: 540px; }
+.section-heading { margin-bottom: 20px; }
+button, select, input, summary { transition: background-color .18s, border-color .18s, box-shadow .18s; }
+button:hover { filter: brightness(1.08); }
+.roster-player[aria-pressed="true"] { box-shadow: inset 3px 0 #d9efa1; }
+.library-drawer { border: 1px solid #b5d09b29; border-radius: 14px; margin-bottom: 18px; background: #19251dcc; }
+.library-drawer summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 15px 18px; }
+.library-drawer summary::-webkit-details-marker { display:none; }
+.library-drawer summary:focus-visible { outline: 3px solid #d9efa1; outline-offset: 3px; border-radius: 12px; }
+.library-title { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; min-width: 0; }
+.library-title small { display: inline-block; margin-left: 14px; color: #9dae9b; font-size: 11px; font-weight: 400; }
+.library-action { font-size: 12px; color: #d9efa1; flex-shrink: 0; }
+.library-action span { margin-left: 9px; }
+.library-content { border-top: 1px solid #b5d09b22; padding: 14px; }
+.library-content .save-bar { border: 0; background: transparent; padding: 4px; margin-bottom: 12px; }
+.library-content .cloud-panel { border-top: 1px solid #b5d09b22; padding-top: 16px; margin: 0; }
+.passing-preview { width: 260px; flex-shrink: 0; }
+.passing-preview svg { display: block; width: 100%; overflow: visible; }
+.mini-field { fill: #1a2b20; stroke: #aecb8c28; }
+.mini-lines { stroke: #aacb8a25; fill: none; }
+.pass-route { stroke: #cbe5a35c; stroke-dasharray: 3 6; fill: none; }
+.mini-player text { fill: #14251a; font: 700 10px 'DM Sans',sans-serif; }
+.passing-ball { animation: passing 8s ease-in-out infinite; }
+.mini-player { animation: offering 8s ease-in-out infinite; }
+.player-1 { animation-delay: -2.6s; }.player-2 { animation-delay: -5.3s; }
+.preview-caption { display: flex; align-items: center; justify-content: space-between; color: #9cad91; font-size: 9px; letter-spacing: 1.6px; padding: 0 10px; }
+.preview-caption button { background: none; border: 0; padding: 5px 8px; color: #c9ddab; font-size: 11px; }
+.paused * { animation-play-state: paused !important; }
+@keyframes passing { 0%,10%,100% { transform:translate(70px,98px); } 33%,43% {transform:translate(150px,46px);} 66%,76% {transform:translate(230px,98px);} }
+@keyframes offering { 0%,100% { transform:translateY(0); } 33% {transform:translateY(-4px);} 66% {transform:translateY(2px);} }
+@media(max-width:1100px) { .workspace {grid-template-columns:200px minmax(0,1fr);} .passing-preview {width:220px;} }
+@media(max-width:600px) { header {height:64px;} main {padding-top:20px;} .page-heading {flex-wrap:wrap; gap:12px;} .passing-preview {width:100%; max-width:250px; margin:auto;} .page-heading > div:first-child {width:100%;} .intro {margin-top:10px;} .library-drawer summary {padding:12px; align-items:flex-start;} .library-title small {display:block;margin:4px 0 0;} .library-action {max-width:130px;text-align:right;line-height:1.5;} .workspace {display:flex;} .pitch-panel {order:-1;} .pitch-area {height:390px;} .library-content {padding:10px;} }
+@media(prefers-reduced-motion:reduce) { *, *::before, *::after {animation:none !important;transition:none !important;} .passing-ball {transform:translate(70px,98px);} }

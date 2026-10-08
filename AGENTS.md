@@ -86,3 +86,9 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Connected project zfizduvgocwtviacqmnt via ignored .env; production/local redirects configured.
 - Real SQL transaction verified owner read/insert, other-owner isolation, forged-owner insert rejection, anonymous denial; all test data rolled back.
 - Configured signed-out panel verified at 390/768/1280 via Playwright. Eight unit tests passed. Live email login and cross-session save still pending.
+
+## Visual polish checkpoint
+- [x] Compact expandable save/account bar, pitch-first mobile layout, refined green/lime panels.
+- [x] Decorative passing drill with pause and reduced-motion support.
+- [x] Playwright checks at 390/768/1280: no overflow; local save and pause verified; eight tests/build passed.
+- Cloud login and local save/reopen confirmed by user; cross-device check remains pending.
