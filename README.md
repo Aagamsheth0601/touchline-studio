@@ -23,7 +23,7 @@ Open http://127.0.0.1:5173. Use `npm test` for formation checks and `npm run bui
 - Reset camera and clear selection.
 - Mobile, tablet, and desktop layouts; visible WebGL failure messages.
 
-Players are not draggable yet. Names, instructions, a second team, accounts, saved lineups, sharing, substitutions, and AI are future milestones. Refreshing resets the current lineup. Pitch dimensions are illustrative, not regulation measurements. Positional labels describe formation rows rather than detailed tactical roles.
+Players are not draggable yet. Instructions, a second team, accounts, sharing, substitutions, and AI are future milestones. Saved lineups can be reopened after refresh; unsaved edits are not stored. Pitch dimensions are illustrative, not regulation measurements. Positional labels describe formation rows rather than detailed tactical roles.
 
 ## How the pieces fit
 
@@ -40,3 +40,9 @@ Milestone 1 was exercised with Playwright MCP at 390, 768, and 1280px. All nine 
 ## Hosting later
 
 Netlify can host this frontend with build command `npm run build` and publish directory `dist`. No backend or API keys are needed for milestone 1. Hosting is not part of this milestone.
+
+## Milestone 2
+
+Jersey markers now display editable kit numbers (1-99). Select a player to edit an optional name. Formation changes preserve profiles by slot; smaller formats temporarily hide unused slots without deleting their profiles.
+
+Name a lineup and use Save lineup to store it in this browser. Reopen it from Saved on this device. Saving again updates it; Save as copy creates a separate record. Unsaved changes prompt before opening another lineup or leaving the page. Browser storage is local to this origin and browser: clearing data removes it, and it does not sync across devices or migrate automatically to a hosted URL. No backend or authentication was added.

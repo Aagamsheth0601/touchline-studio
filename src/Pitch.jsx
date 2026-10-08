@@ -138,16 +138,6 @@ export default function Pitch({
         group.position.set(p.x, 0, p.z);
         group.userData.playerId = p.id;
         const active = p.id === latest.current.selected;
-        const token = new THREE.Mesh(
-          new THREE.CylinderGeometry(1.25, 1.45, 0.8, 32),
-          new THREE.MeshStandardMaterial({
-            color: p.role === "GK" ? "#e6edb6" : "#f4824f",
-            roughness: 0.45,
-          }),
-        );
-        token.position.y = 0.65;
-        token.userData.playerId = p.id;
-        group.add(token);
         if (active) {
           const ring = new THREE.Mesh(
             new THREE.TorusGeometry(1.8, 0.09, 8, 48),
@@ -161,20 +151,42 @@ export default function Pitch({
         c.width = 128;
         c.height = 128;
         const ctx = c.getContext("2d");
+        // A camera-facing jersey keeps its printed number legible from every angle.
         ctx.beginPath();
-        ctx.arc(64, 64, 57, 0, Math.PI * 2);
-        ctx.fillStyle = "#15251e";
+        const outline = [
+          [34, 10],
+          [49, 18],
+          [79, 18],
+          [94, 10],
+          [123, 36],
+          [108, 60],
+          [94, 51],
+          [94, 120],
+          [34, 120],
+          [34, 51],
+          [20, 60],
+          [5, 36],
+        ];
+        outline.forEach(([x, y], i) =>
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
+        );
+        ctx.closePath();
+        ctx.fillStyle = p.role === "GK" ? "#dce9a4" : "#f4824f";
         ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 72px Arial";
+        ctx.strokeStyle = active ? "#ffffff" : "#192f24";
+        ctx.lineWidth = active ? 7 : 3;
+        ctx.stroke();
+        ctx.fillStyle = "#182a21";
+        ctx.font = "bold 49px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(String(p.id), 64, 66);
+        ctx.fillText(String(p.number), 64, 76);
         const texture = new THREE.CanvasTexture(c);
+        texture.colorSpace = THREE.SRGBColorSpace;
         const label = new THREE.Sprite(
           new THREE.SpriteMaterial({ map: texture, depthTest: false }),
         );
-        label.scale.set(2.7, 2.7, 1);
+        label.scale.set(4.4, 4.4, 1);
         label.position.y = 2.3;
         label.userData.playerId = p.id;
         group.add(label);

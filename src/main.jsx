@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Pitch from "./Pitch.jsx";
 import { presets, makePlayers } from "./formations.js";
 import "./style.css";
+import { readLineups, saveLineup } from "./storage.js";
 
 function App() {
   const [format, setFormat] = useState(6),
@@ -10,13 +11,99 @@ function App() {
     [selected, setSelected] = useState(null),
     [view, setView] = useState("3d"),
     [resetKey, setResetKey] = useState(0);
+  const [profiles, setProfiles] = useState({});
+  const [name, setName] = useState("My lineup");
+  const [saved, setSaved] = useState([]);
+  const [recordId, setRecordId] = useState(null);
+  const [dirty, setDirty] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [failure, setFailure] = useState("");
+  useEffect(() => {
+    try {
+      setSaved(readLineups(localStorage));
+    } catch (e) {
+      setFailure(e.message);
+    }
+  }, []);
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  function edit() {
+    setDirty(true);
+    setNotice("");
+  }
+  function save(asCopy = false) {
+    if (!name.trim()) {
+      setFailure("Give your lineup a name before saving.");
+      return;
+    }
+    try {
+      const id = asCopy || !recordId ? crypto.randomUUID() : recordId;
+      setSaved(
+        saveLineup(localStorage, {
+          id,
+          name: name.trim(),
+          format,
+          formation,
+          profiles,
+        }),
+      );
+      setRecordId(id);
+      setDirty(false);
+      setFailure("");
+      setNotice("Saved on this device.");
+    } catch (e) {
+      setFailure(
+        "Could not save this lineup. Storage may be blocked, full, or damaged. Your current edits are still here.",
+      );
+    }
+  }
+  function openSaved(id) {
+    if (!id) return;
+    if (dirty && !window.confirm("Discard unsaved edits and open this lineup?"))
+      return;
+    const r = saved.find((item) => item.id === id);
+    if (!r) return;
+    setName(r.name);
+    setFormat(r.format);
+    setFormation(r.formation);
+    setProfiles(r.profiles);
+    setRecordId(r.id);
+    setSelected(null);
+    setDirty(false);
+    setNotice("Opened saved lineup.");
+    setFailure("");
+  }
+  function updatePlayer(id, patch) {
+    setProfiles((previous) => ({
+      ...previous,
+      [id]: {
+        name: previous[id]?.name || "",
+        number: previous[id]?.number || id,
+        ...patch,
+      },
+    }));
+    edit();
+  }
   const players = useMemo(
-    () => makePlayers(format, formation),
-    [format, formation],
+    () =>
+      makePlayers(format, formation).map((p) => ({
+        ...p,
+        name: profiles[p.id]?.name || "",
+        number: profiles[p.id]?.number || p.id,
+      })),
+    [format, formation, profiles],
   );
   const player = players.find((p) => p.id === selected);
   // Change format and its formation together so we never render an invalid combination.
   function changeFormat(next) {
+    edit();
     setFormat(next);
     setFormation(presets[next][0]);
     setSelected(null);
@@ -36,7 +123,7 @@ function App() {
         </a>
         <span className="header-note">YOUR TEAM. YOUR SHAPE.</span>
         <span className="version">
-          Lineup lab <b>01</b>
+          Lineup lab <b>02</b>
         </span>
       </header>
       <main>
@@ -49,9 +136,48 @@ function App() {
             </p>
           </div>
           <span className="session-label">
-            LOCAL SESSION<span>Changes reset on refresh</span>
+            THIS DEVICE ONLY
+            <span>
+              {dirty ? "Unsaved changes" : "Save lineups to revisit later"}
+            </span>
           </span>
         </div>
+        <section className="save-bar" aria-label="Lineup library">
+          <label>
+            Game / lineup name
+            <input
+              maxLength={80}
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                edit();
+              }}
+            />
+          </label>
+          <button onClick={() => save()}>Save lineup</button>
+          {recordId && <button onClick={() => save(true)}>Save as copy</button>}
+          <div className="saved-picker">
+            <label htmlFor="saved-lineups">Saved on this device</label>
+            <select
+              id="saved-lineups"
+              value=""
+              onChange={(e) => openSaved(e.target.value)}
+            >
+              <option value="">Open a saved lineup ({saved.length})</option>
+              {saved.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name} / {r.format}v{r.format}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p>
+            Saved in this browser only. Clearing browser data removes saved
+            lineups. Unsaved edits are not stored.
+          </p>
+          {notice && <p role="status">{notice}</p>}
+          {failure && <p role="alert">{failure}</p>}
+        </section>
         <div className="workspace">
           <aside className="setup panel">
             <div className="section-heading">
@@ -77,7 +203,10 @@ function App() {
             <select
               id="formation"
               value={formation}
-              onChange={(e) => setFormation(e.target.value)}
+              onChange={(e) => {
+                setFormation(e.target.value);
+                edit();
+              }}
             >
               {presets[format].map((f) => (
                 <option key={f}>{f}</option>
@@ -99,10 +228,10 @@ function App() {
                   <span
                     className={"number " + (p.role === "GK" ? "keeper" : "")}
                   >
-                    {p.id.toString().padStart(2, "0")}
+                    {p.number.toString().padStart(2, "0")}
                   </span>
                   <span>
-                    Player {p.id}
+                    {p.name || `Player ${p.id}`}
                     <small>{roleNames[p.role]}</small>
                   </span>
                   <span className="role">{p.role}</span>
@@ -171,15 +300,49 @@ function App() {
                     (player.role === "GK" ? "keeper-shirt" : "")
                   }
                 >
-                  {player.id}
+                  {player.number}
                 </div>
                 <p className="eyebrow">MY TEAM / {player.role}</p>
-                <h3>Player {player.id}</h3>
+                <h3>{player.name || `Player ${player.id}`}</h3>
                 <p className="detail-role">{roleNames[player.role]}</p>
+                <div className="player-editor">
+                  <label>
+                    Player name (optional)
+                    <input
+                      maxLength={40}
+                      value={player.name}
+                      placeholder={`Player ${player.id}`}
+                      onChange={(e) =>
+                        updatePlayer(player.id, { name: e.target.value })
+                      }
+                    />
+                  </label>
+                  <div className="kit-field">
+                    <label htmlFor="kit-number">Kit number</label>
+                    <select
+                      id="kit-number"
+                      value={player.number}
+                      onChange={(e) =>
+                        updatePlayer(player.id, {
+                          number: Number(e.target.value),
+                        })
+                      }
+                    >
+                      {Array.from({ length: 99 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {players.some(
+                    (p) => p.id !== player.id && p.number === player.number,
+                  ) && <p className="hint">Another player has this number.</p>}
+                </div>
                 <dl>
                   <div>
                     <dt>Shirt number</dt>
-                    <dd>{player.id.toString().padStart(2, "0")}</dd>
+                    <dd>{player.number.toString().padStart(2, "0")}</dd>
                   </div>
                   <div>
                     <dt>Formation</dt>
