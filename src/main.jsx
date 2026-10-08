@@ -31,6 +31,7 @@ function App() {
     [selected, setSelected] = useState(null),
     [view, setView] = useState("3d"),
     [resetKey, setResetKey] = useState(0);
+  const [moveMode, setMoveMode] = useState(false);
   const [profiles, setProfiles] = useState({});
   const [name, setName] = useState("My lineup");
   const [saved, setSaved] = useState([]);
@@ -104,6 +105,7 @@ function App() {
     setProfiles((previous) => ({
       ...previous,
       [id]: {
+        ...previous[id],
         name: previous[id]?.name || "",
         number: previous[id]?.number || id,
         ...patch,
@@ -141,6 +143,7 @@ function App() {
     () =>
       makePlayers(format, formation).map((p) => ({
         ...p,
+        ...(profiles[p.id]?.position || {}),
         name: profiles[p.id]?.name || "",
         number: profiles[p.id]?.number || p.id,
       })),
@@ -148,7 +151,12 @@ function App() {
   );
   const player = players.find((p) => p.id === selected);
   // Change format and its formation together so we never render an invalid combination.
+  function resetPositions() {
+    setProfiles(previous => Object.fromEntries(Object.entries(previous).map(([id, p]) => { const {position, ...rest}=p; return [id,rest]; })));
+    edit();
+  }
   function changeFormat(next) {
+    resetPositions();
     edit();
     setFormat(next);
     setFormation(presets[next][0]);
@@ -254,6 +262,7 @@ function App() {
               id="formation"
               value={formation}
               onChange={(e) => {
+                resetPositions();
                 setFormation(e.target.value);
                 edit();
               }}
@@ -315,10 +324,17 @@ function App() {
                 </button>
               </div>
             </div>
+            <div className="movement-toolbar">
+              <button aria-pressed={moveMode} onClick={()=>setMoveMode(!moveMode)}>{moveMode ? "Move players" : "Move camera"}</button>
+              <span>{moveMode ? "Drag a jersey to reposition it" : "Switch to Move players to arrange your team"}</span>
+              <button onClick={resetPositions}>Reset positions</button>
+            </div>
             <div className="pitch-area">
               <Pitch
                 {...{ players, selected, view, format, resetKey }}
                 onSelect={setSelected}
+                moveMode={moveMode}
+                onMove={(id, position)=>updatePlayer(id,{position})}
               />
               <span className="pitch-corner">TOUCHLINE / {format}-A-SIDE</span>
               <button

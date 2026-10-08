@@ -92,3 +92,9 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - [x] Decorative passing drill with pause and reduced-motion support.
 - [x] Playwright checks at 390/768/1280: no overflow; local save and pause verified; eight tests/build passed.
 - Cloud login and local save/reopen confirmed by user; cross-device check remains pending.
+
+## Player movement checkpoint
+- [x] Move players / camera toggle; mouse and touch drag, field bounds, gesture cancellation.
+- [x] Positions stored in profiles for local/cloud copies; older saves remain valid. Formation changes/reset remove only positions.
+- [x] Playwright mouse/touch gestures and save/reopen/reset verified. Storage coordinate validation covered.
+- [ ] Arrows, ball, and sequence playback: next checkpoint.

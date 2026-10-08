@@ -16,7 +16,8 @@ export function readLineups(storage) {
             typeof p.name !== "string" ||
             !Number.isInteger(p.number) ||
             p.number < 1 ||
-            p.number > 99,
+            p.number > 99 ||
+            (p.position !== undefined && (!p.position || !Number.isFinite(p.position.x) || !Number.isFinite(p.position.z) || Math.abs(p.position.x)>15 || Math.abs(p.position.z)>21)),
         ),
     )
   )

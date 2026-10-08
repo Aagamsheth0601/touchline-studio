@@ -49,3 +49,11 @@ test("storage quota errors propagate to the UI", () => {
     /Quota/,
   );
 });
+test("positions round-trip and reject out-of-field or malformed coordinates", () => {
+  const moved = {...record, profiles: {1: {...record.profiles[1], position: {x: 12, z: -18}}}};
+  assert.deepEqual(readLineups({getItem:()=>JSON.stringify([moved])})[0].profiles[1].position, {x:12,z:-18});
+  for(const position of [{x:16,z:0},{x:0,z:22},{x:"1",z:0},null]) {
+    const invalid={...moved,profiles:{1:{...moved.profiles[1],position}}};
+    assert.throws(()=>readLineups({getItem:()=>JSON.stringify([invalid])}));
+  }
+});

@@ -10,11 +10,13 @@ export default function Pitch({
   view,
   format,
   resetKey,
+  moveMode,
+  onMove,
 }) {
   const host = useRef(null),
     sceneApi = useRef(null),
-    latest = useRef({ players, selected, onSelect });
-  latest.current = { players, selected, onSelect };
+    latest = useRef({ players, selected, onSelect, onMove, moveMode });
+  latest.current = { players, selected, onSelect, onMove, moveMode };
   const [error, setError] = useState("");
   useEffect(() => {
     const el = host.current;
@@ -232,24 +234,59 @@ export default function Pitch({
     observer.observe(el);
     const ray = new THREE.Raycaster(),
       pointer = new THREE.Vector2();
-    let down = null;
-    const pointerDown = (e) => {
-      down = [e.clientX, e.clientY];
-    };
-    const pointerUp = (e) => {
-      if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6)
-        return;
+    let down = null, drag = null;
+    const ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    const aim = (e) => {
       const r = renderer.domElement.getBoundingClientRect();
-      pointer.set(
-        ((e.clientX - r.left) / r.width) * 2 - 1,
-        (-(e.clientY - r.top) / r.height) * 2 + 1,
-      );
+      pointer.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1);
       ray.setFromCamera(pointer, camera);
-      const hit = ray
-        .intersectObjects(markers.children, true)
-        .find((h) => h.object.userData.playerId);
-      if (hit) latest.current.onSelect(hit.object.userData.playerId);
     };
+    const groundPoint = () => {
+      const point = ray.ray.intersectPlane(ground, new THREE.Vector3());
+      return point ? field.worldToLocal(point) : null;
+    };
+    const pointerDown = (e) => {
+      if (e.button !== 0 || drag) return;
+      down = [e.clientX, e.clientY];
+      aim(e);
+      const hit = ray.intersectObjects(markers.children, true).find(h=>h.object.userData.playerId);
+      if (!hit || !latest.current.moveMode) return;
+      const id = hit.object.userData.playerId;
+      const p = latest.current.players.find(p=>p.id===id);
+      const point = groundPoint();
+      if (!point) return;
+      drag = {id, pointerId:e.pointerId, dx:p.x-point.x, dz:p.z-point.z, x:p.x, z:p.z};
+      renderer.domElement.setPointerCapture(e.pointerId);
+      latest.current.onSelect(id);
+      e.preventDefault();
+    };
+    const pointerMove = (e) => {
+      if (!drag || e.pointerId!==drag.pointerId) return;
+      aim(e);
+      const point = groundPoint();
+      if (!point) return;
+      drag.x = THREE.MathUtils.clamp(point.x+drag.dx,-15,15);
+      drag.z = THREE.MathUtils.clamp(point.z+drag.dz,-21,21);
+      // Preview in Three.js; commit to React only at the end of the gesture.
+      const group = markers.children.find(g=>g.userData.playerId===drag.id);
+      if (group) group.position.set(drag.x,0,drag.z);
+    };
+    const finish = (e, cancelled=false) => {
+      if (drag) {
+        if(e.pointerId!==drag.pointerId) return;
+        const result=drag; drag=null;
+        if(renderer.domElement.hasPointerCapture(e.pointerId)) renderer.domElement.releasePointerCapture(e.pointerId);
+        if(!cancelled && down && Math.hypot(e.clientX-down[0],e.clientY-down[1])>4) latest.current.onMove(result.id,{x:result.x,z:result.z});
+        else updatePlayers();
+      } else if (!cancelled && down && Math.hypot(e.clientX-down[0],e.clientY-down[1])<=6) {
+        aim(e);
+        const hit=ray.intersectObjects(markers.children,true).find(h=>h.object.userData.playerId);
+        if(hit) latest.current.onSelect(hit.object.userData.playerId);
+      }
+      down=null;
+    };
+    const pointerUp = e=>finish(e);
+    const pointerCancel = e=>finish(e,true);
     const contextLost = (e) => {
       e.preventDefault();
       setError(
@@ -259,7 +296,9 @@ export default function Pitch({
     renderer.domElement.addEventListener("pointerdown", pointerDown);
     renderer.domElement.addEventListener("pointerup", pointerUp);
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
-    sceneApi.current = { updatePlayers, setCamera, field };
+    renderer.domElement.addEventListener("pointermove", pointerMove);
+    renderer.domElement.addEventListener("pointercancel", pointerCancel);
+    sceneApi.current = { updatePlayers, setCamera, field, controls };
     updatePlayers();
     setCamera("3d");
     resize();
@@ -282,6 +321,8 @@ export default function Pitch({
       cancelAnimationFrame(frame);
       observer.disconnect();
       controls.dispose();
+      renderer.domElement.removeEventListener("pointermove", pointerMove);
+      renderer.domElement.removeEventListener("pointercancel", pointerCancel);
       renderer.domElement.removeEventListener("pointerdown", pointerDown);
       renderer.domElement.removeEventListener("pointerup", pointerUp);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
@@ -292,6 +333,9 @@ export default function Pitch({
       sceneApi.current = null;
     };
   }, []);
+  useEffect(() => {
+    if(sceneApi.current) sceneApi.current.controls.enabled = !moveMode;
+  }, [moveMode]);
   useEffect(() => {
     sceneApi.current?.updatePlayers();
   }, [players, selected]);
