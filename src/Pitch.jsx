@@ -131,7 +131,10 @@ export default function Pitch({
         group.remove(child);
       }
     };
+    let nameLabels = [];
     const updatePlayers = () => {
+      nameLabels.forEach(({ button }) => button.remove());
+      nameLabels = [];
       disposeGroup(markers);
       latest.current.players.forEach((p) => {
         const group = new THREE.Group();
@@ -190,6 +193,19 @@ export default function Pitch({
         label.position.y = 2.3;
         label.userData.playerId = p.id;
         group.add(label);
+        // Screen-sized HTML labels stay readable when the pitch is zoomed out.
+        if (p.name.trim()) {
+          const button = document.createElement("button");
+          button.className = "pitch-name";
+          button.textContent = p.name.trim();
+          button.setAttribute(
+            "aria-label",
+            `Select ${p.name.trim()}, number ${p.number}`,
+          );
+          button.onclick = () => latest.current.onSelect(p.id);
+          el.appendChild(button);
+          nameLabels.push({ button, group });
+        }
         markers.add(group);
       });
     };
@@ -252,6 +268,14 @@ export default function Pitch({
       frame = requestAnimationFrame(render);
       controls.update();
       renderer.render(scene, camera);
+      nameLabels.forEach(({ button, group }) => {
+        const position = group
+          .localToWorld(new THREE.Vector3(0, 4.9, 0))
+          .project(camera);
+        button.hidden = position.z > 1 || position.z < -1;
+        button.style.left = `${((position.x + 1) * el.clientWidth) / 2}px`;
+        button.style.top = `${((1 - position.y) * el.clientHeight) / 2}px`;
+      });
     };
     render();
     return () => {
@@ -261,6 +285,7 @@ export default function Pitch({
       renderer.domElement.removeEventListener("pointerdown", pointerDown);
       renderer.domElement.removeEventListener("pointerup", pointerUp);
       renderer.domElement.removeEventListener("webglcontextlost", contextLost);
+      nameLabels.forEach(({ button }) => button.remove());
       disposeGroup(field);
       renderer.dispose();
       el.removeChild(renderer.domElement);

@@ -832,3 +832,43 @@ dd {
 .player-editor {
   align-items: start;
 }
+.pitch-host {
+  overflow: hidden;
+}
+.pitch-name {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 1;
+  max-width: 130px;
+  padding: 4px 7px;
+  border: 1px solid #617b60;
+  border-radius: 4px;
+  background: #10251ff2;
+  color: white;
+  font:
+    600 14px/1.25 "DM Sans",
+    sans-serif;
+  overflow-wrap: anywhere;
+  box-shadow: 0 2px 6px #0006;
+}
+.pitch-name:hover,
+.pitch-name:focus-visible {
+  background: #334c2d;
+}
+.cloud-panel h2 {
+  width: 100%;
+}
+.cloud-panel form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.account-email {
+  overflow-wrap: anywhere;
+}
+.cloud-panel button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

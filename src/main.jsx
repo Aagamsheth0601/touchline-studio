@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Pitch from "./Pitch.jsx";
+import CloudPanel from "./CloudPanel.jsx";
 import { presets, makePlayers } from "./formations.js";
 import "./style.css";
 import { readLineups, saveLineup } from "./storage.js";
@@ -91,6 +92,32 @@ function App() {
     }));
     edit();
   }
+  function openCloud(record) {
+    if (
+      dirty &&
+      !window.confirm("Discard unsaved edits and open this cloud lineup?")
+    )
+      return;
+    try {
+      // Reuse the device validator before trusting remote JSON in the renderer.
+      const [checked] = readLineups({
+        getItem: () => JSON.stringify([record]),
+      });
+      setName(checked.name);
+      setFormat(checked.format);
+      setFormation(checked.formation);
+      setProfiles(checked.profiles);
+      setRecordId(null);
+      setSelected(null);
+      setDirty(false);
+      setFailure("");
+      setNotice("Opened cloud copy. Save on this device to keep a local copy.");
+    } catch {
+      setFailure(
+        "This cloud lineup could not be opened. Your current lineup is unchanged.",
+      );
+    }
+  }
   const players = useMemo(
     () =>
       makePlayers(format, formation).map((p) => ({
@@ -178,6 +205,10 @@ function App() {
           {notice && <p role="status">{notice}</p>}
           {failure && <p role="alert">{failure}</p>}
         </section>
+        <CloudPanel
+          lineup={{ name, format, formation, profiles }}
+          onOpen={openCloud}
+        />
         <div className="workspace">
           <aside className="setup panel">
             <div className="section-heading">

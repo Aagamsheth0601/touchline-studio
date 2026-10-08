@@ -63,3 +63,16 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: tablet kit selector separated from its label; separator character became unreadable.
 - Cause: grid treated label/select as separate children; shell-to-Python text encoding damaged a new non-ASCII separator.
 - Fix: group the kit field and use an ASCII separator.
+
+## Deployment and milestone 3
+- Live site: https://fut-studio.netlify.app/ (Netlify project ID 01c08cb1-4560-4467-b0e2-ee57fe8fdff2).
+- Source stays private at Aagamsheth0601/touchline-studio.
+- Larger 14px screen-space names deployed; verified at 390 / 768 / 1280px.
+- Milestone 3 started: Supabase email-link sign-in, immutable cloud snapshots, and owner-only RLS migration prepared.
+- Not yet connected or verified against a real Supabase project. Do not claim cross-device saving works until two-session and owner-isolation tests pass.
+- See SUPABASE_SETUP.md for setup. No secret/service-role key may enter client code.
+
+### Pitch names too small
+- Symptom: names in canvas textures became tiny when the pitch was zoomed out.
+- Cause: texture text scaled in world units with the pitch.
+- Fix: camera-projected HTML buttons with fixed 14px text, retaining click selection.
