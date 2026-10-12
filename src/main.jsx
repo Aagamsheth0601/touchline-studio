@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Pitch from "./Pitch.jsx";
+import DecisionGame from "./DecisionGame.jsx";
 import SequencePanel from "./SequencePanel.jsx";
 import CloudPanel from "./CloudPanel.jsx";
 import { presets, makePlayers } from "./formations.js";
@@ -482,4 +483,5 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(new URLSearchParams(window.location.search).get("mode") === "editor" ? <App /> : <DecisionGame />);
+

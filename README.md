@@ -54,3 +54,9 @@ Arrange players and the ball, capture Step 1, move them to their next positions,
 All movement is simultaneous and straight-line; arrows remain annotations. These two captures are temporary and are not included in local or cloud saves. Formation changes and opening another lineup clear them. Multi-step playback and saved sequences are the next checkpoint.
 
 The current app also supports dragging players, placing the ball, run/pass arrows, and Supabase email-link accounts with cloud lineup snapshots. Authenticated cloud tactics and cross-device verification remain pending.
+
+## Football decision game
+
+The homepage now opens Escape the press, an authored scenario with two choices. Choose 5 to keep possession or 6 to gain territory. Watch the ball, receivers and defenders move, read the tradeoff, and try the other pass. Pause, replay, skip animation, and a reduced-motion option are available. Exploration progress is session-only; no AI generation or login is required.
+
+The existing lineup editor and saved lineups remain available at ?mode=editor. Scenario data and outcomes live in src/scenario.js; DecisionGame.jsx owns the interaction, while Pitch.jsx renders its animated positions. This is a teaching illustration, not a predictive match simulation.

@@ -130,3 +130,16 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - [x] Layout screenshots inspected at 390/768/1280px; no horizontal overflow.
 - [ ] Multi-step sequences and sequence persistence: next checkpoint, not implemented yet.
 - Captures are temporary and cleared when switching formation or opening another lineup. Arrows remain annotations; playback uses simultaneous straight-line movement.
+
+## Decision game pivot: scenario 1
+- User approved replacing the default editor experience with a decision game.
+- [x] Escape the press: two authored pass outcomes, moving ball, receivers and defenders.
+- [x] Explanation, tradeoff, replay, alternative choice, session-only exploration count, reduced-motion option.
+- [x] Existing editor remains at ?mode=editor; saves are unchanged.
+- [x] 15 tests passed; both outcomes, pause/resume, replay/skip, reduced motion, and 390/768/1280 layouts exercised with Playwright.
+- [ ] User checkpoint before more scenarios, AI, or progress persistence.
+
+### Decision game integration fixes
+- Symptom: exact endpoint assertion returned 0.5999999999999996 instead of 0.6. Cause: floating-point interpolation. Fix: return exact copied endpoints at progress 0 and 1.
+- Symptom: overhead control used the wrong camera mode. Cause: new component used overhead while renderer expects top. Fix: use the existing top mode.
+- Symptom: names obscured jerseys in responsive screenshots. Cause: game button styles applied to projected labels. Fix: specific compact label styles and a closer scenario camera.

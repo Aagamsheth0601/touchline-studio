@@ -12,5 +12,8 @@ export function interpolatePoint(from, to, progress) {
   // When a ball exists in only one step, show it only at that endpoint.
   // Do not invent a path from an unknown position.
   if (!from || !to) return t === 0 ? from : t === 1 ? to : null;
+  if (t === 0) return { ...from };
+  if (t === 1) return { ...to };
   return { x: from.x + (to.x - from.x) * t, z: from.z + (to.z - from.z) * t };
 }
+

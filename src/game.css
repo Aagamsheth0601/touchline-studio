@@ -1,0 +1,42 @@
+.decision-game {min-height:100vh;background:radial-gradient(ellipse at top right,#253b27 0,transparent 50%),#101713}
+.game-main {max-width:1300px;padding:36px;margin:auto}
+.game-heading {display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px}
+.game-heading h1 {font-size:clamp(44px,6vw,76px);margin:6px 0 12px;line-height:1;font-family:'Barlow Condensed',sans-serif}
+.game-heading p:not(.eyebrow) {color:#b8c7bd;line-height:1.6;margin:0}
+.scenario-tag {font-size:11px;letter-spacing:2px;color:#dcef9e;border:1px solid #455b40;border-radius:30px;padding:12px;white-space:nowrap}
+.game-layout {display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);gap:24px;align-items:start}
+.game-field {overflow:hidden;border:1px solid #354b3b;border-radius:20px;background:#111d19}
+.field-top,.field-legend {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;font-size:11px;letter-spacing:1px;color:#c4d5c4}
+.field-top div {display:flex;gap:6px}
+.decision-game button {border:1px solid #415442;background:#24352b;border-radius:9px;padding:10px 14px;min-height:44px}
+.decision-game button:hover {border-color:#dcef9e;background:#304735}
+.decision-game button[aria-pressed=true] {background:#dcef9e;color:#14251b}
+.game-pitch {height:510px;position:relative}
+.game-pitch .pitch-host {height:100%;min-height:0}
+.field-legend {flex-wrap:wrap;font-size:11px;letter-spacing:0;border-top:1px solid #293e30}
+.field-legend i {display:inline-block;width:8px;height:8px;background:#f4824f;border-radius:50%;margin-right:6px}
+.field-legend .opponent {background:#7bbce8}
+.decision-card {padding:28px;background:#1a271f;border:1px solid #3b4a3b;border-radius:20px}
+.decision-card h2 {font-size:32px;line-height:1.12;margin:12px 0 18px;font-family:'Barlow Condensed',sans-serif}
+.decision-card p {font-size:14px;line-height:1.7;color:#c1cec4}
+.decision-card .eyebrow {font-size:11px;color:#dcef9e}
+.game-instruction {color:#e6eddd!important}
+.pass-choices {display:grid;gap:12px;margin:24px 0}
+.pass-choices button {display:flex;align-items:center;gap:14px;text-align:left;padding:18px}
+.choice-number {font-size:30px;font-family:'Barlow Condensed';color:#edac82}
+.pass-choices strong,.pass-choices small {display:block}
+.pass-choices small {font-size:12px;line-height:1.6;color:#b8c7bd;margin-top:5px}
+.game-controls {display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.game-controls .alternative {background:#dcef9e;color:#13231a;width:100%;font-weight:700}
+.explanation h3 {font-size:13px;color:#e7efda;margin:22px 0 4px}
+.explanation p {margin:0}
+.decision-card progress {width:100%;height:6px;accent-color:#dcef9e}
+.motion-option {display:flex;gap:8px;align-items:center;font-size:12px;color:#b3c2b7;margin-top:24px;line-height:1.5}
+.scenario-progress {border-top:1px solid #3b4a3b;margin-top:22px;padding-top:18px;font-size:12px;color:#dcef9e}
+.authored-note {font-size:12px;line-height:1.7;color:#8eaa97;max-width:850px;margin:24px 0}
+.editor-link {font-size:12px;color:#c5d3bf;text-decoration:none}
+@media(max-width:850px){.game-main{padding:24px}.game-layout{grid-template-columns:1fr}.game-pitch{height:460px}.scenario-tag{display:none}.decision-card{padding:24px}}
+@media(max-width:480px){.decision-game header{padding:0 16px;height:68px;gap:8px}.decision-game .brand{font-size:22px;gap:6px}.decision-game .brand-small{display:none}.game-main{padding:20px 14px}.game-heading{margin-bottom:20px}.game-pitch{height:365px}.field-top,.field-legend{padding:10px 12px}.decision-card{padding:20px}.game-layout{gap:16px}}
+.decision-game .pitch-name {padding:3px 6px;min-height:0;font-size:11px;border-radius:4px;pointer-events:none;background:#17281de8;border:1px solid #4a604e}
+.pitch-status {font-size:12px;color:#dcef9e;padding:12px 16px;border-top:1px solid #293e30;line-height:1.5}
+.game-field {scroll-margin-top:12px}

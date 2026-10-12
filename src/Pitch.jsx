@@ -11,6 +11,7 @@ export default function Pitch({
   view,
   format,
   resetKey,
+  zoom = 1,
   moveMode,
   onMove,
   tool, tactics, onTactic, preview,
@@ -40,6 +41,8 @@ export default function Pitch({
     );
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 250);
+    camera.zoom = zoom;
+    camera.updateProjectionMatrix();
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
@@ -178,7 +181,7 @@ export default function Pitch({
           i ? ctx.lineTo(x, y) : ctx.moveTo(x, y),
         );
         ctx.closePath();
-        ctx.fillStyle = p.role === "GK" ? "#dce9a4" : "#f4824f";
+        ctx.fillStyle = p.team === "opponent" ? "#7bbce8" : p.role === "GK" ? "#dce9a4" : "#f4824f";
         ctx.fill();
         ctx.strokeStyle = active ? "#ffffff" : "#192f24";
         ctx.lineWidth = active ? 7 : 3;
@@ -422,3 +425,5 @@ export default function Pitch({
     </div>
   );
 }
+
+
