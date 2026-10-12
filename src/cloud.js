@@ -8,7 +8,7 @@ export const cloud = url && key ? createClient(url, key) : null;
 export async function listCloudLineups(client) {
   const { data, error } = await client
     .from("lineups")
-    .select("id,name,format,formation,profiles,created_at")
+    .select("id,name,format,formation,profiles,tactics,created_at")
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
@@ -32,6 +32,7 @@ export async function saveCloudCopy(client, lineup) {
       format: lineup.format,
       formation: lineup.formation,
       profiles: lineup.profiles,
+      tactics: lineup.tactics || {ball:null,arrows:[]},
     });
   if (error) throw error;
 }

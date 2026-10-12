@@ -12,11 +12,12 @@ export default function Pitch({
   resetKey,
   moveMode,
   onMove,
+  tool, tactics, onTactic,
 }) {
   const host = useRef(null),
     sceneApi = useRef(null),
-    latest = useRef({ players, selected, onSelect, onMove, moveMode });
-  latest.current = { players, selected, onSelect, onMove, moveMode };
+    latest = useRef({ players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic });
+  latest.current = { players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic };
   const [error, setError] = useState("");
   useEffect(() => {
     const el = host.current;
@@ -211,6 +212,37 @@ export default function Pitch({
         markers.add(group);
       });
     };
+    const tactical = new THREE.Group();
+    field.add(tactical);
+    let startPoint = null;
+    const drawTactics = () => {
+      disposeGroup(tactical);
+      const {ball,arrows} = latest.current.tactics;
+      if (ball) {
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(.65,16,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7}));
+        sphere.position.set(ball.x,.7,ball.z); tactical.add(sphere);
+        const patch = new THREE.Mesh(new THREE.SphereGeometry(.67,6,4),new THREE.MeshBasicMaterial({color:0x14251a,wireframe:true}));
+        patch.position.copy(sphere.position); tactical.add(patch);
+      }
+      arrows.forEach(a=>{
+        const from = new THREE.Vector3(a.from.x,.2,a.from.z), to = new THREE.Vector3(a.to.x,.2,a.to.z);
+        const delta = to.clone().sub(from), length=delta.length();
+        if(length<.4) return;
+        const color=a.kind==="pass" ? 0xffc18c : 0xe6f7af;
+        const material = a.kind==="pass" ? new THREE.LineDashedMaterial({color,dashSize:.7,gapSize:.45}) : new THREE.LineBasicMaterial({color});
+        const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([from,to]),material);
+        line.computeLineDistances(); tactical.add(line);
+        const direction=delta.normalize(), side=new THREE.Vector3(-direction.z,0,direction.x);
+        const wing1=to.clone().addScaledVector(direction,-1.3).addScaledVector(side,.7);
+        const wing2=to.clone().addScaledVector(direction,-1.3).addScaledVector(side,-.7);
+        tactical.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([wing1,to,wing2]),new THREE.LineBasicMaterial({color})));
+      });
+      if(startPoint) {
+        const ring=new THREE.Mesh(new THREE.RingGeometry(.5,.8,24),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
+        ring.rotation.x=-Math.PI/2;ring.position.set(startPoint.x,.25,startPoint.z);tactical.add(ring);
+      }
+    };
+    const resetDraft = () => {startPoint=null;drawTactics();};
     const setCamera = (mode) => {
       camera.position.set(...(mode === "top" ? [0, 76, 0.01] : [35, 48, 51]));
       camera.lookAt(0, 0, 0);
@@ -250,7 +282,7 @@ export default function Pitch({
       down = [e.clientX, e.clientY];
       aim(e);
       const hit = ray.intersectObjects(markers.children, true).find(h=>h.object.userData.playerId);
-      if (!hit || !latest.current.moveMode) return;
+      if (!hit || !latest.current.moveMode || latest.current.tool!=="players") return;
       const id = hit.object.userData.playerId;
       const p = latest.current.players.find(p=>p.id===id);
       const point = groundPoint();
@@ -280,6 +312,16 @@ export default function Pitch({
         else updatePlayers();
       } else if (!cancelled && down && Math.hypot(e.clientX-down[0],e.clientY-down[1])<=6) {
         aim(e);
+        if(latest.current.moveMode && latest.current.tool!=="players") {
+          const p=groundPoint();
+          if(p && Math.abs(p.x)<=16 && Math.abs(p.z)<=22) {
+            const point={x:THREE.MathUtils.clamp(p.x,-15,15),z:THREE.MathUtils.clamp(p.z,-21,21)};
+            if(latest.current.tool==="ball") latest.current.onTactic({kind:"ball",point});
+            else if(!startPoint) {startPoint=point;drawTactics();}
+            else if(Math.hypot(point.x-startPoint.x,point.z-startPoint.z)>.4) {latest.current.onTactic({kind:latest.current.tool,from:startPoint,to:point});startPoint=null;}
+          }
+          down=null;return;
+        }
         const hit=ray.intersectObjects(markers.children,true).find(h=>h.object.userData.playerId);
         if(hit) latest.current.onSelect(hit.object.userData.playerId);
       }
@@ -298,7 +340,8 @@ export default function Pitch({
     renderer.domElement.addEventListener("webglcontextlost", contextLost);
     renderer.domElement.addEventListener("pointermove", pointerMove);
     renderer.domElement.addEventListener("pointercancel", pointerCancel);
-    sceneApi.current = { updatePlayers, setCamera, field, controls };
+    sceneApi.current = { updatePlayers, setCamera, field, controls, drawTactics, resetDraft };
+    drawTactics();
     updatePlayers();
     setCamera("3d");
     resize();
@@ -333,6 +376,7 @@ export default function Pitch({
       sceneApi.current = null;
     };
   }, []);
+  useEffect(() => { sceneApi.current?.resetDraft(); }, [tool, moveMode, format, tactics]);
   useEffect(() => {
     if(sceneApi.current) sceneApi.current.controls.enabled = !moveMode;
   }, [moveMode]);

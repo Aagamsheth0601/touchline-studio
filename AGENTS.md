@@ -98,3 +98,20 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - [x] Positions stored in profiles for local/cloud copies; older saves remain valid. Formation changes/reset remove only positions.
 - [x] Playwright mouse/touch gestures and save/reopen/reset verified. Storage coordinate validation covered.
 - [ ] Arrows, ball, and sequence playback: next checkpoint.
+
+## Ball and arrows checkpoint
+- [x] Place/move ball; two-tap run/pass arrows; undo last arrow; clear tactics.
+- [x] Local saving/reopening and emulated touch checked, including 390/768/1280 layouts.
+- [x] Ten automated tests pass, including tactics validation and older saves.
+- [ ] Verify migration 002 against Supabase, then deploy. Browser-control runtime currently fails with a missing-path error; do not claim deployed.
+- [ ] Sequence playback follows this checkpoint.
+
+### Conflicting camera/edit instructions
+- Symptom: arrow tools still displayed "Move players" and told users to orbit while editing.
+- Cause: movement-only labels were reused for all tactics tools.
+- Fix: label editing mode "Edit pitch", show active tools only while editing, and display context-specific guidance.
+
+### SQL editor partial replacement
+- Symptom: migration result showed old security-test output or a role error.
+- Cause: replacing the Monaco textarea did not reliably replace the whole editor document.
+- Fix: select all and clear before entering SQL; verify the schema explicitly. Final migration verification still pending.

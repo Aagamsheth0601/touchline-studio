@@ -57,3 +57,8 @@ test("positions round-trip and reject out-of-field or malformed coordinates", ()
     assert.throws(()=>readLineups({getItem:()=>JSON.stringify([invalid])}));
   }
 });
+test("tactics survive a save and malformed arrows are rejected", () => {
+  const tactics={ball:{x:0,z:0},arrows:[{kind:"pass",from:{x:0,z:0},to:{x:5,z:-5}}]};
+  assert.deepEqual(readLineups({getItem:()=>JSON.stringify([{...record,tactics}])})[0].tactics,tactics);
+  assert.throws(()=>readLineups({getItem:()=>JSON.stringify([{...record,tactics:{...tactics,arrows:[{kind:"run",from:{x:99,z:0},to:{x:0,z:0}}]}}])}));
+});

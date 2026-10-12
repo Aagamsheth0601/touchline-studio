@@ -919,3 +919,8 @@ button:hover { filter: brightness(1.08); }
 .movement-toolbar button {background:#203526;border:1px solid #587048;border-radius:6px;padding:9px;color:#d9efa1;font-size:12px;}
 .movement-toolbar button[aria-pressed=true] {background:#d9efa1;color:#162019;}
 .movement-toolbar span {flex:1;min-width:120px;}
+.tactics-toolbar {display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #b5d09b22;}
+.tactics-toolbar button {font-size:12px;padding:8px 10px;border:1px solid #405a40;border-radius:6px;background:#1c3022;}
+.tactics-toolbar button[aria-pressed=true] {background:#d9efa1;color:#17261a;}
+.tactics-toolbar button:disabled {opacity:.4;cursor:default;}
+.tactics-toolbar p {width:100%;margin:2px 0 0;font-size:11px;color:#aabe9d;}

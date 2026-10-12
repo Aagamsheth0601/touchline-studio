@@ -32,6 +32,8 @@ function App() {
     [view, setView] = useState("3d"),
     [resetKey, setResetKey] = useState(0);
   const [moveMode, setMoveMode] = useState(false);
+  const [tool, setTool] = useState("players");
+  const [tactics, setTactics] = useState({ball:null, arrows:[]});
   const [profiles, setProfiles] = useState({});
   const [name, setName] = useState("My lineup");
   const [saved, setSaved] = useState([]);
@@ -73,6 +75,7 @@ function App() {
           format,
           formation,
           profiles,
+          tactics,
         }),
       );
       setRecordId(id);
@@ -95,6 +98,7 @@ function App() {
     setFormat(r.format);
     setFormation(r.formation);
     setProfiles(r.profiles);
+    setTactics(r.tactics || {ball:null,arrows:[]});
     setRecordId(r.id);
     setSelected(null);
     setDirty(false);
@@ -128,6 +132,7 @@ function App() {
       setFormat(checked.format);
       setFormation(checked.formation);
       setProfiles(checked.profiles);
+      setTactics(checked.tactics || {ball:null,arrows:[]});
       setRecordId(null);
       setSelected(null);
       setDirty(false);
@@ -156,6 +161,7 @@ function App() {
     edit();
   }
   function changeFormat(next) {
+    setTactics({ball:null,arrows:[]});
     resetPositions();
     edit();
     setFormat(next);
@@ -231,7 +237,7 @@ function App() {
           {failure && <p role="alert">{failure}</p>}
         </section>
         <CloudPanel
-          lineup={{ name, format, formation, profiles }}
+          lineup={{ name, format, formation, profiles, tactics }}
           onOpen={openCloud}
         />
           </div>
@@ -262,6 +268,7 @@ function App() {
               id="formation"
               value={formation}
               onChange={(e) => {
+                setTactics({ball:null,arrows:[]});
                 resetPositions();
                 setFormation(e.target.value);
                 edit();
@@ -325,15 +332,24 @@ function App() {
               </div>
             </div>
             <div className="movement-toolbar">
-              <button aria-pressed={moveMode} onClick={()=>setMoveMode(!moveMode)}>{moveMode ? "Move players" : "Move camera"}</button>
-              <span>{moveMode ? "Drag a jersey to reposition it" : "Switch to Move players to arrange your team"}</span>
+              <button aria-pressed={moveMode} onClick={()=>setMoveMode(!moveMode)}>{moveMode ? "Edit pitch" : "Move camera"}</button>
+              <span>{moveMode ? "Choose a tool below" : "Camera mode: drag to orbit"}</span>
               <button onClick={resetPositions}>Reset positions</button>
+            </div>
+            <div className="tactics-toolbar" aria-label="Tactics tools">
+              {[["players","Players"],["ball","Place ball"],["run","Run arrow"],["pass","Pass arrow"]].map(([value,label])=><button key={value} aria-pressed={moveMode && tool===value} onClick={()=>{setTool(value);setMoveMode(true);}}>{label}</button>)}
+              <button disabled={!tactics.arrows.length} onClick={()=>{setTactics(t=>({...t,arrows:t.arrows.slice(0,-1)}));edit();}}>Undo arrow</button>
+              <button disabled={!tactics.ball && !tactics.arrows.length} onClick={()=>{setTactics({ball:null,arrows:[]});edit();}}>Clear tactics</button>
+              <p role="status">{tactics.arrows.length>=20 ? "Maximum 20 arrows reached. Undo an arrow to add another." : !moveMode ? "Choose a tool to start editing." : tool==="ball" ? "Tap the pitch to place or move the ball." : tool==="run" || tool==="pass" ? "Tap a start, then an end point. Solid = run; dashed = pass. Up to 20 arrows." : "Move players mode: drag jerseys. Your lineup saves include ball and arrows."}</p>
             </div>
             <div className="pitch-area">
               <Pitch
                 {...{ players, selected, view, format, resetKey }}
                 onSelect={setSelected}
                 moveMode={moveMode}
+                tool={tool}
+                tactics={tactics}
+                onTactic={(item)=>{if(item.kind!=="ball" && tactics.arrows.length>=20){setFailure("Maximum 20 arrows. Undo an arrow before adding another.");return;}setTactics(t=>item.kind==="ball" ? {...t,ball:item.point} : {...t,arrows:[...t.arrows,item]});edit();}}
                 onMove={(id, position)=>updatePlayer(id,{position})}
               />
               <span className="pitch-corner">TOUCHLINE / {format}-A-SIDE</span>
@@ -346,7 +362,7 @@ function App() {
             </div>
             <div className="pitch-footer">
               <span>
-                {view === "3d"
+                {moveMode ? "Editing pitch · Choose Move camera to orbit or zoom" : view === "3d"
                   ? "Drag to orbit · Scroll or pinch to zoom"
                   : "Overhead view · Scroll or pinch to zoom"}
               </span>
