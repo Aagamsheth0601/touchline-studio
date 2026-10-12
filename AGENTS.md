@@ -115,3 +115,10 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: migration result showed old security-test output or a role error.
 - Cause: replacing the Monaco textarea did not reliably replace the whole editor document.
 - Fix: select all and clear before entering SQL; verify the schema explicitly. Final migration verification still pending.
+
+## Ball and arrows deployment verified
+- Browser connection recovered; existing GitHub sessions restored after expiry.
+- Supabase information_schema query confirmed public.lineups.tactics is jsonb.
+- Netlify deployment 6acc4fa176932045e0a4404e published; source checkpoint 368ccc7.
+- Live Playwright test created a ball/pass arrow, saved locally, reloaded and reopened successfully.
+- Earlier deployment blocker resolved. Authenticated cloud tactics round-trip and cross-device verification remain pending.
