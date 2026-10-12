@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Pitch from "./Pitch.jsx";
+import SequencePanel from "./SequencePanel.jsx";
 import CloudPanel from "./CloudPanel.jsx";
 import { presets, makePlayers } from "./formations.js";
 import "./style.css";
@@ -31,6 +32,8 @@ function App() {
     [selected, setSelected] = useState(null),
     [view, setView] = useState("3d"),
     [resetKey, setResetKey] = useState(0);
+  const [preview, setPreview] = useState(null);
+  const [sequenceKey, setSequenceKey] = useState(0);
   const [moveMode, setMoveMode] = useState(false);
   const [tool, setTool] = useState("players");
   const [tactics, setTactics] = useState({ball:null, arrows:[]});
@@ -94,6 +97,8 @@ function App() {
       return;
     const r = saved.find((item) => item.id === id);
     if (!r) return;
+    setPreview(null);
+    setSequenceKey(k=>k+1);
     setName(r.name);
     setFormat(r.format);
     setFormation(r.formation);
@@ -128,6 +133,8 @@ function App() {
       const [checked] = readLineups({
         getItem: () => JSON.stringify([record]),
       });
+      setPreview(null);
+      setSequenceKey(k=>k+1);
       setName(checked.name);
       setFormat(checked.format);
       setFormation(checked.formation);
@@ -197,7 +204,7 @@ function App() {
           </div>
           <PassingPreview />
         </div>
-        <details className="library-drawer">
+        <details className="library-drawer" inert={preview ? "" : undefined}>
           <summary><span className="library-title">{name || "Untitled lineup"}<small>{format}v{format} / {formation}</small></span><span className="library-action">{dirty ? "Unsaved edits · " : ""}Save & open lineups <span aria-hidden="true">↗</span></span></summary>
           <div className="library-content">
         <section className="save-bar" aria-label="Lineup library">
@@ -243,7 +250,7 @@ function App() {
           </div>
         </details>
         <div className="workspace">
-          <aside className="setup panel">
+          <aside className="setup panel" inert={preview ? "" : undefined}>
             <div className="section-heading">
               <span className="step">01</span>
               <h2>Set the game</h2>
@@ -331,22 +338,24 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="movement-toolbar">
+            <div className="movement-toolbar" inert={preview ? "" : undefined}>
               <button aria-pressed={moveMode} onClick={()=>setMoveMode(!moveMode)}>{moveMode ? "Edit pitch" : "Move camera"}</button>
               <span>{moveMode ? "Choose a tool below" : "Camera mode: drag to orbit"}</span>
               <button onClick={resetPositions}>Reset positions</button>
             </div>
-            <div className="tactics-toolbar" aria-label="Tactics tools">
+            <div className="tactics-toolbar" aria-label="Tactics tools" inert={preview ? "" : undefined}>
               {[["players","Players"],["ball","Place ball"],["run","Run arrow"],["pass","Pass arrow"]].map(([value,label])=><button key={value} aria-pressed={moveMode && tool===value} onClick={()=>{setTool(value);setMoveMode(true);}}>{label}</button>)}
               <button disabled={!tactics.arrows.length} onClick={()=>{setTactics(t=>({...t,arrows:t.arrows.slice(0,-1)}));edit();}}>Undo arrow</button>
               <button disabled={!tactics.ball && !tactics.arrows.length} onClick={()=>{setTactics({ball:null,arrows:[]});edit();}}>Clear tactics</button>
               <p role="status">{tactics.arrows.length>=20 ? "Maximum 20 arrows reached. Undo an arrow to add another." : !moveMode ? "Choose a tool to start editing." : tool==="ball" ? "Tap the pitch to place or move the ball." : tool==="run" || tool==="pass" ? "Tap a start, then an end point. Solid = run; dashed = pass. Up to 20 arrows." : "Move players mode: drag jerseys. Your lineup saves include ball and arrows."}</p>
             </div>
+            <SequencePanel key={`${format}-${formation}-${sequenceKey}`} players={players} ball={tactics.ball} onPreview={setPreview} />
             <div className="pitch-area">
               <Pitch
                 {...{ players, selected, view, format, resetKey }}
                 onSelect={setSelected}
-                moveMode={moveMode}
+                preview={preview}
+                moveMode={moveMode && !preview}
                 tool={tool}
                 tactics={tactics}
                 onTactic={(item)=>{if(item.kind!=="ball" && tactics.arrows.length>=20){setFailure("Maximum 20 arrows. Undo an arrow before adding another.");return;}setTactics(t=>item.kind==="ball" ? {...t,ball:item.point} : {...t,arrows:[...t.arrows,item]});edit();}}
@@ -362,14 +371,14 @@ function App() {
             </div>
             <div className="pitch-footer">
               <span>
-                {moveMode ? "Editing pitch · Choose Move camera to orbit or zoom" : view === "3d"
+                {preview ? "Playback preview · Return to editing to change positions" : moveMode ? "Editing pitch · Choose Move camera to orbit or zoom" : view === "3d"
                   ? "Drag to orbit · Scroll or pinch to zoom"
                   : "Overhead view · Scroll or pinch to zoom"}
               </span>
               <span>Click a player to inspect</span>
             </div>
           </section>
-          <aside className="details panel">
+          <aside className="details panel" inert={preview ? "" : undefined}>
             <div className="section-heading">
               <span className="step">02</span>
               <h2>Player focus</h2>

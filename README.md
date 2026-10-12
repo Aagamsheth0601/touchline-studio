@@ -46,3 +46,11 @@ Netlify can host this frontend with build command `npm run build` and publish di
 Jersey markers now display editable kit numbers (1-99). Select a player to edit an optional name. Formation changes preserve profiles by slot; smaller formats temporarily hide unused slots without deleting their profiles.
 
 Name a lineup and use Save lineup to store it in this browser. Reopen it from Saved on this device. Saving again updates it; Save as copy creates a separate record. Unsaved changes prompt before opening another lineup or leaving the page. Browser storage is local to this origin and browser: clearing data removes it, and it does not sync across devices or migrate automatically to a hosted URL. No backend or authentication was added.
+
+## Two-step movement preview
+
+Arrange players and the ball, capture Step 1, move them to their next positions, then capture Step 2. Play, pause, restart, change speed, or scrub through the movement. Return to editing restores your editable positions.
+
+All movement is simultaneous and straight-line; arrows remain annotations. These two captures are temporary and are not included in local or cloud saves. Formation changes and opening another lineup clear them. Multi-step playback and saved sequences are the next checkpoint.
+
+The current app also supports dragging players, placing the ball, run/pass arrows, and Supabase email-link accounts with cloud lineup snapshots. Authenticated cloud tactics and cross-device verification remain pending.

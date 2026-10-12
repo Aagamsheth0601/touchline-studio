@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { interpolatePoint } from "./playback.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 // Three.js owns drawing and the camera. React remains the source of truth for players.
@@ -12,12 +13,12 @@ export default function Pitch({
   resetKey,
   moveMode,
   onMove,
-  tool, tactics, onTactic,
+  tool, tactics, onTactic, preview,
 }) {
   const host = useRef(null),
     sceneApi = useRef(null),
-    latest = useRef({ players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic });
-  latest.current = { players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic };
+    latest = useRef({ players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic, preview });
+  latest.current = { players, selected, onSelect, onMove, moveMode, tool, tactics, onTactic, preview };
   const [error, setError] = useState("");
   useEffect(() => {
     const el = host.current;
@@ -205,7 +206,7 @@ export default function Pitch({
             "aria-label",
             `Select ${p.name.trim()}, number ${p.number}`,
           );
-          button.onclick = () => latest.current.onSelect(p.id);
+          button.onclick = () => { if (!latest.current.preview) latest.current.onSelect(p.id); };
           el.appendChild(button);
           nameLabels.push({ button, group });
         }
@@ -215,15 +216,19 @@ export default function Pitch({
     const tactical = new THREE.Group();
     field.add(tactical);
     let startPoint = null;
+    // Reuse one ball mesh during playback, rather than rebuilding its geometry every frame.
+    const ballMarker = new THREE.Group();
+    ballMarker.add(new THREE.Mesh(new THREE.SphereGeometry(.65,16,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7})));
+    ballMarker.add(new THREE.Mesh(new THREE.SphereGeometry(.67,6,4),new THREE.MeshBasicMaterial({color:0x14251a,wireframe:true})));
+    field.add(ballMarker);
+    const positionBall = (ball) => {
+      ballMarker.visible = Boolean(ball);
+      if (ball) ballMarker.position.set(ball.x,.7,ball.z);
+    };
     const drawTactics = () => {
       disposeGroup(tactical);
       const {ball,arrows} = latest.current.tactics;
-      if (ball) {
-        const sphere = new THREE.Mesh(new THREE.SphereGeometry(.65,16,12),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.7}));
-        sphere.position.set(ball.x,.7,ball.z); tactical.add(sphere);
-        const patch = new THREE.Mesh(new THREE.SphereGeometry(.67,6,4),new THREE.MeshBasicMaterial({color:0x14251a,wireframe:true}));
-        patch.position.copy(sphere.position); tactical.add(patch);
-      }
+      positionBall(ball);
       arrows.forEach(a=>{
         const from = new THREE.Vector3(a.from.x,.2,a.from.z), to = new THREE.Vector3(a.to.x,.2,a.to.z);
         const delta = to.clone().sub(from), length=delta.length();
@@ -278,7 +283,7 @@ export default function Pitch({
       return point ? field.worldToLocal(point) : null;
     };
     const pointerDown = (e) => {
-      if (e.button !== 0 || drag) return;
+      if (latest.current.preview || e.button !== 0 || drag) return;
       down = [e.clientX, e.clientY];
       aim(e);
       const hit = ray.intersectObjects(markers.children, true).find(h=>h.object.userData.playerId);
@@ -345,10 +350,27 @@ export default function Pitch({
     updatePlayers();
     setCamera("3d");
     resize();
-    let frame;
+    let frame, wasPreview = false;
     const render = () => {
       frame = requestAnimationFrame(render);
       controls.update();
+      const preview = latest.current.preview;
+      if (preview) {
+        markers.children.forEach(group => {
+          const id = group.userData.playerId;
+          const point = interpolatePoint(preview.start.positions[id],preview.end.positions[id],preview.progress);
+          if (point) group.position.set(point.x,0,point.z);
+        });
+        positionBall(interpolatePoint(preview.start.ball,preview.end.ball,preview.progress));
+      } else if (wasPreview) {
+        // Restore editing positions exactly, including after pause/restart/scrub.
+        markers.children.forEach(group => {
+          const player=latest.current.players.find(p=>p.id===group.userData.playerId);
+          if(player) group.position.set(player.x,0,player.z);
+        });
+        positionBall(latest.current.tactics.ball);
+      }
+      wasPreview = Boolean(preview);
       renderer.render(scene, camera);
       nameLabels.forEach(({ button, group }) => {
         const position = group

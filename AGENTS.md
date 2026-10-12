@@ -122,3 +122,11 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Netlify deployment 6acc4fa176932045e0a4404e published; source checkpoint 368ccc7.
 - Live Playwright test created a ball/pass arrow, saved locally, reloaded and reopened successfully.
 - Earlier deployment blocker resolved. Authenticated cloud tactics round-trip and cross-device verification remain pending.
+
+## Two-step playback checkpoint
+- [x] Capture two positions; play/pause/restart; scrub; 0.5x/1x/2x speed.
+- [x] Players and ball interpolate without changing editable lineup positions. Editing is disabled during preview.
+- [x] 13 automated tests and production build passed. Playwright verified movement, pause, endpoints, restart, edit restoration, local saving, and formation reset.
+- [x] Layout screenshots inspected at 390/768/1280px; no horizontal overflow.
+- [ ] Multi-step sequences and sequence persistence: next checkpoint, not implemented yet.
+- Captures are temporary and cleared when switching formation or opening another lineup. Arrows remain annotations; playback uses simultaneous straight-line movement.

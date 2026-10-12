@@ -924,3 +924,16 @@ button:hover { filter: brightness(1.08); }
 .tactics-toolbar button[aria-pressed=true] {background:#d9efa1;color:#17261a;}
 .tactics-toolbar button:disabled {opacity:.4;cursor:default;}
 .tactics-toolbar p {width:100%;margin:2px 0 0;font-size:11px;color:#aabe9d;}
+.sequence-panel { padding:14px; border-bottom:1px solid #b5d09b22; background:#21301c80; }
+.sequence-panel h2 { font-size:14px; }
+.sequence-panel p, .sequence-panel small { font-size:11px; color:#b2c3a5; line-height:1.6; }
+.sequence-panel small { display:block; margin-top:10px; }
+.sequence-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0; }
+.sequence-actions button { padding:9px 11px; background:#d9efa1; color:#192b18; border:0; border-radius:6px; font:inherit; font-size:12px; }
+.sequence-actions button:disabled { opacity:.4; cursor:default; }
+.sequence-actions span { font-size:11px; color:#c7d6b7; }
+.sequence-actions label { display:flex; align-items:center; gap:7px; font-size:12px; }
+.sequence-actions select { width:auto; padding:6px; font-size:12px; }
+.sequence-scrubber { display:grid; gap:6px; font-size:12px; color:#d9efa1; }
+.sequence-scrubber input { width:100%; margin:0; accent-color:#d9efa1; min-height:30px; }
+[inert] { opacity:.5; }
