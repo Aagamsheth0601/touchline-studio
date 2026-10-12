@@ -40,3 +40,7 @@
 .decision-game .pitch-name {padding:3px 6px;min-height:0;font-size:11px;border-radius:4px;pointer-events:none;background:#17281de8;border:1px solid #4a604e}
 .pitch-status {font-size:12px;color:#dcef9e;padding:12px 16px;border-top:1px solid #293e30;line-height:1.5}
 .game-field {scroll-margin-top:12px}
+.scenario-selector {display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.scenario-selector button {text-align:left;flex:1;min-width:220px;padding:14px 18px}
+.scenario-selector small,.scenario-selector strong {display:block}
+.scenario-selector small {font-size:10px;letter-spacing:1.5px;margin-bottom:6px}

@@ -60,3 +60,5 @@ The current app also supports dragging players, placing the ball, run/pass arrow
 The homepage now opens Escape the press, an authored scenario with two choices. Choose 5 to keep possession or 6 to gain territory. Watch the ball, receivers and defenders move, read the tradeoff, and try the other pass. Pause, replay, skip animation, and a reduced-motion option are available. Exploration progress is session-only; no AI generation or login is required.
 
 The existing lineup editor and saved lineups remain available at ?mode=editor. Scenario data and outcomes live in src/scenario.js; DecisionGame.jsx owns the interaction, while Pitch.jsx renders its animated positions. This is a teaching illustration, not a predictive match simulation.
+
+Two scenarios are now available from the homepage selector. Make the defender choose compares an early pass with carrying the ball in a two-on-one. The carry ends at the next passing decision rather than automatically completing a second action. Each scenario retains its own exploration count during the current session; refreshing resets progress. Switching scenarios cancels an active replay.

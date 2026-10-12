@@ -143,3 +143,15 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: exact endpoint assertion returned 0.5999999999999996 instead of 0.6. Cause: floating-point interpolation. Fix: return exact copied endpoints at progress 0 and 1.
 - Symptom: overhead control used the wrong camera mode. Cause: new component used overhead while renderer expects top. Fix: use the existing top mode.
 - Symptom: names obscured jerseys in responsive screenshots. Cause: game button styles applied to projected labels. Fix: specific compact label styles and a closer scenario camera.
+
+## Two-scenario checkpoint
+- [x] User approved two-on-one situation and scenario selector.
+- [x] Early pass and carry outcomes; carrying keeps the ball at player 4.
+- [x] Scenario-specific copy, separate session progress, switching cancels playback.
+- [x] 17 tests/build passed; Playwright exercised all four choices, switching mid-replay, progress retention, touch, pause/resume, and 390/768/1280 screenshots.
+- [ ] User checkpoint before further scenarios or persistence.
+
+### PowerShell source quoting
+- Symptom: edit command failed to parse before changing files.
+- Cause: typographic apostrophes in single-quoted replacement strings are treated as delimiters by PowerShell.
+- Fix: use apply_patch or a literal here-string script for source transformations.
