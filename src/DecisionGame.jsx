@@ -22,12 +22,12 @@ function ScenarioGame({scenario,onScenario,seen,onExplored}){
     if(!playing) return;
     let frame,previous;
     const tick=time=>{
-      if(previous!==undefined) setProgress(p=>Math.min(1,p+Math.min(time-previous,100)/3200));
+      if(previous!==undefined) setProgress(p=>Math.min(1,p+Math.min(time-previous,100)/(choice === 'carry' ? 2400 : 1300)));
       previous=time; frame=requestAnimationFrame(tick);
     };
     frame=requestAnimationFrame(tick);
     return ()=>cancelAnimationFrame(frame);
-  },[playing]);
+  },[playing,choice]);
   useEffect(()=>{
     if(progress===1 && choice){setPlaying(false);onExplored(choice);}
   },[progress,choice]);
@@ -66,5 +66,6 @@ function ScenarioGame({scenario,onScenario,seen,onExplored}){
     </main>
   </div>;
 }
+
 
 
