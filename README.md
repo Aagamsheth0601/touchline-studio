@@ -62,3 +62,6 @@ The homepage now opens Escape the press, an authored scenario with two choices. 
 The existing lineup editor and saved lineups remain available at ?mode=editor. Scenario data and outcomes live in src/scenario.js; DecisionGame.jsx owns the interaction, while Pitch.jsx renders its animated positions. This is a teaching illustration, not a predictive match simulation.
 
 Two scenarios are now available from the homepage selector. Make the defender choose compares an early pass with carrying the ball in a two-on-one. The carry ends at the next passing decision rather than automatically completing a second action. Each scenario retains its own exploration count during the current session; refreshing resets progress. Switching scenarios cancels an active replay.
+
+## Coaching library: semantic search
+Below the game, search eight authored practice notes by meaning. Supabase gte-small generates embeddings; pgvector ranks the stored notes. Results show original text and source IDs, not generated answers. See COACHING_SEARCH.md for architecture, deployment, evaluation and limitations.

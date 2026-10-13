@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Pitch from './Pitch.jsx';
+import CoachingSearch from './CoachingSearch.jsx';
 import {scenarios,scenarioFrame} from './scenario.js';
 import './game.css';
 
@@ -62,6 +63,7 @@ function ScenarioGame({scenario,onScenario,seen,onExplored}){
           {seen.length===2 && <p className="comparison">{scenario.comparison}</p>}
         </section>
       </div>
+      <CoachingSearch />
       <p className="authored-note">An authored practice situation. These are possible outcomes, not predictions. Off-ball players are omitted to focus on this decision; offside is assumed clear. No sign-in needed.</p>
     </main>
   </div>;

@@ -155,3 +155,21 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: edit command failed to parse before changing files.
 - Cause: typographic apostrophes in single-quoted replacement strings are treated as delimiters by PowerShell.
 - Fix: use apply_patch or a literal here-string script for source transformations.
+
+## Coaching semantic-search checkpoint
+- [x] Eight authored notes seeded in pgvector, 384-dimensional gte-small embeddings generated.
+- [x] Search endpoint deployed with legacy JWT verification; indexing requires protected-table permissions via x-index-key.
+- [x] Public anon key configured in ignored .env; user explicitly authorized credential use. Service-role key never saved to source or frontend.
+- [x] 19 unit tests/build; seven real retrieval cases; anonymous indexing/direct-table denial; real Playwright at 390/768/1280 plus mocked empty/error states.
+- [ ] Checkpoint with user before AI-generated answers.
+- See COACHING_SEARCH.md for setup, limits and evaluation.
+
+### Supabase editor and credential setup
+- Symptom: editor stayed loading; deployment clicks appeared ineffective. Cause: Monaco load failure followed by a dashboard announcement overlay. Fix: reload editor, dismiss overlay, verify actual deployed state.
+- Symptom: indexing returned 403 despite a provided service credential. Exact credential-string comparison failed; the specific gateway/runtime transformation was not established. Fix: dedicated x-index-key validated through protected database access, and use that validated client for indexing. Public-key indexing remains denied in the live check.
+- Automatic review initially blocked API Keys access; user explicitly authorized existing public and service-role key use. A later review quota interruption delayed setup; continuation completed it.
+
+### Weak semantic matches
+- Symptom: bread-making question returned football notes at a 0.72 cutoff.
+- Cause: embedding similarities can be relatively high even for unrelated short questions.
+- Fix: calibrated cutoff to 0.82 with five relevant and two unrelated evaluation questions. Treat as a small-library heuristic, not a guarantee.
