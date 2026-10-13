@@ -173,3 +173,20 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: bread-making question returned football notes at a 0.72 cutoff.
 - Cause: embedding similarities can be relatively high even for unrelated short questions.
 - Fix: calibrated cutoff to 0.82 with five relevant and two unrelated evaluation questions. Treat as a small-library heuristic, not a guarantee.
+
+
+## Sourced knowledge checkpoint
+- [x] Eight brief AI-assisted summaries tied to four FIFA Training Centre sources; titles, URLs and checked date stored with notes.
+- [x] Migration 004 applied; eight embeddings rebuilt; existing private access preserved.
+- [x] 20 tests; ten real retrieval cases with attribution and access checks. Expected note top-three 8/8, top-one 6/8; two unrelated queries filtered. This is a smoke set, not a broad accuracy claim.
+- [x] Playwright source links and screenshots at 390/768/1280; no page errors or horizontal overflow.
+- [ ] User checkpoint before generated answers. Sources do not validate authored game outcomes; no professional review claimed.
+
+### Source-card replacement bug
+- Symptom: new introduction rendered, but search cards still displayed the old source label.
+- Root cause: an encoding-sensitive text replacement missed the middle-dot-containing JSX.
+- Fix: replace the card fragment explicitly; verify real result links at all three viewport widths.
+
+### Local verification environment
+- Build initially failed with EPERM while resolving Pitch.jsx under the sandbox; the same build succeeded with authorized file access.
+- Browser verification initially found no localhost server; starting the project dev server restored it.

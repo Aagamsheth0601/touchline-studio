@@ -1,4 +1,8 @@
-# Coaching search: first vector milestone
+# Coaching search
+
+Current source provenance and evaluation: [COACHING_SOURCES.md](COACHING_SOURCES.md). Apply migration 004 after 003, then reindex all eight revised notes. The current UI shows source links alongside our AI-assisted summaries.
+
+The sections below record the initial semantic-search implementation.
 
 ## What is built
 Eight Touchline-authored practice notes are stored in Supabase Postgres. Each note has a 384-dimensional gte-small embedding. The coaching-search Edge Function embeds a question with the same model and calls match_coaching_notes to rank notes by cosine similarity. The UI shows up to three original notes above 0.82 similarity, with their source IDs. It generates no answers.

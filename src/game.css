@@ -62,3 +62,5 @@
 .note-results details {margin-top:14px;font-size:12px}
 .search-error {color:#ffc3a8!important}
 @media(max-width:480px){.coaching-library{padding:20px}.search-row{flex-direction:column}.search-row input{width:100%}}
+
+.note-source {display:block;margin-top:10px;color:#dcef9e;font-size:13px;line-height:1.6;overflow-wrap:anywhere;text-underline-offset:3px}

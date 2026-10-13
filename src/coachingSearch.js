@@ -16,3 +16,11 @@ export async function searchNotes(query,{signal}={}) {
   if(!response.ok) throw new Error(payload.error || 'Search could not finish. Please retry.');
   return selectNotes(payload);
 }
+
+// Only render links to the publisher reviewed for this library.
+export function noteSource(note) {
+  try {
+    const url=new URL(note.source_url);
+    return url.protocol==='https:' && url.hostname==='www.fifatrainingcentre.com' && !url.username && !url.password && typeof note.source_title==='string' && note.source_title.trim() ? url.href : null;
+  } catch { return null; }
+}
