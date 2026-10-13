@@ -74,6 +74,22 @@ header {
   letter-spacing: 2px;
   color: #9aa99c;
 }
+.back-to-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  margin-left: auto;
+  color: #dcf19f;
+  font-size: 13px;
+  text-decoration: none;
+}
+.back-to-game:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 600px) {
+  .app > header { gap: 12px; }
+  .app > header .brand-small { display: none; }
+  .back-to-game { font-size: 12px; }
+}
 .version {
   font-size: 13px;
   color: #a8b5aa;

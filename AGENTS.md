@@ -190,3 +190,8 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 ### Local verification environment
 - Build initially failed with EPERM while resolving Pitch.jsx under the sandbox; the same build succeeded with authorized file access.
 - Browser verification initially found no localhost server; starting the project dev server restored it.
+
+### Editor return navigation
+- Symptom: returning to the decision game was hard to discover; only the brand logo linked home.
+- Fix: explicit top-right Back to decision game link, replacing the version label, with a 44px touch target and compact mobile header.
+- Verified navigation and screenshots at 390/768/1280; 20 tests and production build passed. Existing unsaved-edit beforeunload protection remains in place.

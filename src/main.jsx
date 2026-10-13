@@ -190,9 +190,9 @@ function App() {
           <span className="brand-small">STUDIO</span>
         </a>
         <span className="header-note">YOUR TEAM. YOUR SHAPE.</span>
-        <span className="version">
-          Lineup lab <b>03</b>
-        </span>
+        <a className="back-to-game" href="./">
+          <span aria-hidden="true">← </span>Back to decision game
+        </a>
       </header>
       <main>
         <div className="page-heading">
