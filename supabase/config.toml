@@ -1,2 +1,5 @@
 [functions.coaching-search]
 verify_jwt = true
+
+[functions.decision-answer]
+verify_jwt = true

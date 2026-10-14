@@ -64,3 +64,8 @@
 @media(max-width:480px){.coaching-library{padding:20px}.search-row{flex-direction:column}.search-row input{width:100%}}
 
 .note-source {display:block;margin-top:10px;color:#dcef9e;font-size:13px;line-height:1.6;overflow-wrap:anywhere;text-underline-offset:3px}
+.decision-answer {margin:20px 0;padding:20px;border:1px solid #425642;border-radius:12px;background:#122018}
+.decision-answer > p {white-space:pre-wrap;overflow-wrap:anywhere}
+.decision-answer h3 {margin-top:0}
+.decision-answer h4 {margin-bottom:12px}
+.decision-answer > div {margin:14px 0;font-size:13px}

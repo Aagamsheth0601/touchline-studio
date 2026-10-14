@@ -1,0 +1,34 @@
+{
+  "press": {
+    "title": "Escape the press.",
+    "description": "5 offers a short pass inside. 6 is making a forward run, with a covering defender nearby.",
+    "options": {
+      "5": {
+        "label": "Keep it with 5",
+        "why": "5 is behind the approaching defender and offers a short outlet. The ball arrives safely in this scenario, but 5 receives farther from goal, giving the defence time to recover.",
+        "tradeoff": "Useful when keeping the ball matters more than attacking immediately. Next, 5 should look to switch play before pressure arrives."
+      },
+      "6": {
+        "label": "Find the run of 6",
+        "why": "6 runs toward the space outside the covering defender. In this scenario, your early pass reaches 6 before that defender gets across. Waiting longer would make the same pass easier to intercept.",
+        "tradeoff": "Useful when you can pass early and your teammate is already moving. The reward is territory near goal; the risk is a longer pass with less margin for error."
+      }
+    }
+  },
+  "two-on-one": {
+    "title": "Make the defender choose.",
+    "description": "6 is running on your right. The defender is between you both, protecting the route to goal.",
+    "options": {
+      "early": {
+        "label": "Pass early to 6",
+        "why": "6 receives with room to move. Because you passed before drawing the defender toward you, the defender can shift across and delay the route to goal.",
+        "tradeoff": "An early pass reduces your time on the ball, but may waste the two-on-one advantage. Now 6 must decide whether to take on the defender or return the ball."
+      },
+      "carry": {
+        "label": "Carry toward the defender",
+        "why": "You advance with the ball while 6 continues forward. In this outcome, the defender steps toward you, leaving space on the right. The next action would be a pass to 6 before the defender can recover.",
+        "tradeoff": "Carrying creates a better passing angle if the defender commits. If they hold their position, reassess; carrying too close can lose the ball. This replay stops at that decision."
+      }
+    }
+  }
+}

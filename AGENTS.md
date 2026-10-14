@@ -195,3 +195,28 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Symptom: returning to the decision game was hard to discover; only the brand logo linked home.
 - Fix: explicit top-right Back to decision game link, replacing the version label, with a 44px touch target and compact mobile header.
 - Verified navigation and screenshots at 390/768/1280; 20 tests and production build passed. Existing unsaved-edit beforeunload protection remains in place.
+
+
+## Decision questions: in progress
+- [x] Post-replay question form tied to selected scenario and choice; switching clears responses.
+- [x] Prepared Gemini Edge Function, validated scenario snapshot, citation membership checks, refusal path, output truncation rejection, 5/minute and 100/day shared budget migration.
+- [x] 24 unit tests/build; mocked success/refusal/429 and scenario reset in Playwright; 390/768/1280 screenshots reviewed.
+- [ ] User must store GEMINI_API_KEY in Supabase secrets and confirm free/paid tier before provider calls. Do not request a key in chat.
+- [ ] Apply/test migration 005, deploy decision-answer and enable it, evaluate REAL answers across all four outcomes, adversarial/unsupported questions and budget behavior, then publish frontend.
+- Not deployed; no real Gemini answer has been tested. Current live site remains unchanged.
+
+
+## Decision questions: verified backend checkpoint
+- User stored GEMINI_API_KEY and confirmed Google project Free tier by screenshot. No billing enabled and no paid fallback configured.
+- Migration 005 applied; minute/day limits and anonymous RPC denial verified in a rolled-back SQL test.
+- decision-answer deployed with legacy JWT verification; DECISION_ANSWERS_ENABLED=true.
+- 27 tests/build pass; real answers for all four choices, unrelated/credential refusals, and real UI screenshots at 390/768/1280 checked.
+- Source: DECISION_ANSWERS.md. Earlier in-progress checklist is superseded by this checkpoint.
+
+### Gemini explanation quality fixes
+- Symptoms: ambiguous passer/receiver wording; two-on-one guidance mixed into press advice; internal noteIds in prose; credential request answered with unrelated football prose.
+- Causes: ambiguous action labels, broad semantic matches, and relying solely on generation instructions.
+- Fixes: explicit number-4 context and enforced opening replay fact, scenario-specific note filtering, rejected citation metadata in prose, and deterministic refusal of obvious credential requests.
+- Prompt separates observed outcomes from hypothetical alternatives. These checks reduce known errors; they do not prove all generated statements correct.
+
+- Frontend published to Netlify deployment 6acf0753417095dc56f295ed; live browser-to-Gemini answer verified. Checkpoint before further features.
