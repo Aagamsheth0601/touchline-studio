@@ -220,3 +220,13 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Prompt separates observed outcomes from hypothetical alternatives. These checks reduce known errors; they do not prove all generated statements correct.
 
 - Frontend published to Netlify deployment 6acf0753417095dc56f295ed; live browser-to-Gemini answer verified. Checkpoint before further features.
+
+## Learning guide artifact October 16 2026
+- Created a 15-page DOCX architecture and learning guide outside the app repository, grounded in be4905f. No application behavior or deployment changed.
+- Document-generation gotchas: Windows rejected an oversized shell command with error 206; split content and builder into workspace files. Packaged rendering failed because LibreOffice was absent; used a dedicated hidden Word instance to export PDF and Poppler to inspect all 15 pages. Removed an inherited Title border, rerendered, and verified unchanged pages by image hashes.
+
+## Public release security review October 16 2026
+- Full-history Gitleaks scan of 16 commits and tracked snapshot found no credentials. Build JWT detections were verified as public anon roles, not private keys.
+- Live public reads of lineups/notes/retrieval RPC denied with 401; indexing denied with 403.
+- Bug: npm audit flagged the old Supabase auth client and Vite/esbuild dev-server dependencies. Fixed frontend pins to Supabase 2.50.0 and Vite 6.4.4, which supports Node 20.11; zero npm audit findings, 27 tests and production build passed.
+- Browser outcome/question-form/editor-navigation smoke checks passed. See SECURITY.md for audit scope and remote-function dependency limitations.

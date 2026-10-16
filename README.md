@@ -65,3 +65,6 @@ Two scenarios are now available from the homepage selector. Make the defender ch
 
 ## Coaching library: semantic search
 Below the game, search eight authored practice notes by meaning. Supabase gte-small generates embeddings; pgvector ranks the stored notes. Results show original text and source IDs, not generated answers. See COACHING_SEARCH.md for architecture, deployment, evaluation and limitations.
+
+## Current security maintenance
+The frontend now pins Vite 6.4.4 and Supabase JS 2.50.0 after the October 2026 dependency audit. Vite 6 supports the original Node 20.11 environment. Historical milestone descriptions above are retained; see SECURITY.md and the latest AGENTS.md checkpoints for current security scope.
