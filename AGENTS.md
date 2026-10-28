@@ -230,3 +230,7 @@ Run `npm test` and `npm run build`. Verify UI changes with Playwright MCP at app
 - Live public reads of lineups/notes/retrieval RPC denied with 401; indexing denied with 403.
 - Bug: npm audit flagged the old Supabase auth client and Vite/esbuild dev-server dependencies. Fixed frontend pins to Supabase 2.50.0 and Vite 6.4.4, which supports Node 20.11; zero npm audit findings, 27 tests and production build passed.
 - Browser outcome/question-form/editor-navigation smoke checks passed. See SECURITY.md for audit scope and remote-function dependency limitations.
+
+## Security/deployment maintenance October 28 2026
+- Added basic response hardening: framing denied, objects disabled, base URI restricted; MIME sniffing and referrer policy set.
+- Bug: Drop deployment had no reproducible Git build configuration and README described obsolete setup. Fix: netlify.toml runs tests/build, pins Node, and README documents the three public environment values and separate Supabase deployment.

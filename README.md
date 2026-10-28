@@ -1,17 +1,21 @@
 # Touchline Studio
 
-A football lineup studio for captains and amateur coaches. Milestone 1 is a local, interactive React and Three.js app: one team, numbered placeholders, no sign-up or player names required.
+An interactive football decision game and 3D lineup editor built with React and Three.js. Play two authored scenarios, explore sourced coaching notes, ask replay questions, or open the lineup editor.
+
+[Live site](https://fut-studio.netlify.app/) · [Editor](https://fut-studio.netlify.app/?mode=editor)
+
+The milestone sections below record development history; later sections supersede earlier limitations.
 
 ## Run locally
 
-Requires Node 20.11.1 or later. Tooling is pinned to Vite 5 for compatibility with the original development machine.
+Requires Node 20.11.1 or later. Tooling is pinned to Vite 6.4.4 for compatibility with the original development machine.
 
 ```powershell
 npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. Use `npm test` for formation checks and `npm run build` for the production bundle.
+Open http://127.0.0.1:5173. Use `npm test` for the 27 automated checks and `npm run build` for the production bundle.
 
 ## Milestone 1
 
@@ -37,9 +41,15 @@ Players are not draggable yet. Instructions, a second team, accounts, sharing, s
 
 Milestone 1 was exercised with Playwright MCP at 390, 768, and 1280px. All nine formations produced correct player counts; roster selection, both camera modes, and camera reset were exercised. Screenshots were visually inspected. See AGENTS.md for bugs found during development.
 
-## Hosting later
+## Deployment and configuration
 
-Netlify can host this frontend with build command `npm run build` and publish directory `dist`. No backend or API keys are needed for milestone 1. Hosting is not part of this milestone.
+Netlify builds the GitHub `main` branch using `netlify.toml`: `npm test && npm run build`, publish directory `dist`, Node 20.11.1.
+
+For the complete app, copy `.env.example` to ignored `.env` locally and configure the same three public values in Netlify: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and `VITE_SUPABASE_EDGE_ANON_KEY`. Use only a public publishable/anon key. Never put Gemini or service-role secrets in a `VITE_` variable.
+
+Without this configuration the local decision game/editor still work, but cloud saves, coaching search, and AI questions are unavailable. See [SUPABASE_SETUP.md](SUPABASE_SETUP.md), [COACHING_SEARCH.md](COACHING_SEARCH.md), and [DECISION_ANSWERS.md](DECISION_ANSWERS.md) for database migrations and separately deployed Supabase functions. A Netlify deploy does not deploy those functions.
+
+Existing browser saves remain available because the production hostname stays the same.
 
 ## Milestone 2
 
@@ -68,3 +78,6 @@ Below the game, search eight authored practice notes by meaning. Supabase gte-sm
 
 ## Current security maintenance
 The frontend now pins Vite 6.4.4 and Supabase JS 2.50.0 after the October 2026 dependency audit. Vite 6 supports the original Node 20.11 environment. Historical milestone descriptions above are retained; see SECURITY.md and the latest AGENTS.md checkpoints for current security scope.
+
+## Replay questions
+After a replay, ask a question grounded in that scenario and retrieved coaching notes. The separately hosted Supabase function calls Gemini with shared request budgets and validates citations. This is an AI-assisted teaching demo, not a match prediction; see [DECISION_ANSWERS.md](DECISION_ANSWERS.md) and [SECURITY.md](SECURITY.md) for limits.
